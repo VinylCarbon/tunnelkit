@@ -904,6 +904,11 @@ public class SessionProxy {
             }
             reply = optionalReply
             log.debug("Received PUSH_REPLY: \"\(reply.maskedDescription)\"")
+            
+            if let framing = reply.compressionFraming, reply.usesCompression {
+                log.error("Server has compression enabled and this is currently unsupported (\(framing))")
+                throw SessionError.serverCompression
+            }
         } catch let e {
             deferStop(.shutdown, e)
             return
